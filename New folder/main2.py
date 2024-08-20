@@ -9,7 +9,7 @@ root = Tk()
 root.geometry('600x300+600+200')
 root.resizable(False, False)
 
-root.iconbitmap(default=r"C:\Users\LENOVO\PycharmProjects\pythonProject3\New folder\open-book.ico")
+# root.iconbitmap(default=r"C:\Users\LENOVO\PycharmProjects\pythonProject3\New folder\open-book.ico")
 
 image = Image.open("qa.png")
 image = image.resize((20, 20))
@@ -90,7 +90,7 @@ def save_product_data(products):
     product_list = []
     for product in products:
         data = {
-            "snack": product.get_snack(),
+            "product": product.get_snack(),
             "price1": product.get_price1(),
         }
         product_list.append(data)
@@ -109,7 +109,7 @@ def load_product_data():
     product_list = []
     for item in data:
         product = Products(
-            item["snack"],
+            item["product"],
             item["price1"],
         )
         product_list.append(product)
@@ -139,6 +139,7 @@ def add_product():
             frame_add_snack.place_forget()
             root.geometry('650x600+210+50')
             frame_admin.place(relx=0, rely=0)
+            return
 
 
 def save_book_data(books):
@@ -193,6 +194,7 @@ def add_book():
             frame_add_book.place_forget()
             root.geometry('650x600+210+50')
             frame_admin.place(relx=0, rely=0)
+            return
 
 
 def save_user_data(users):
@@ -559,7 +561,7 @@ def confirm_price():
     with open("product_data.json", "r") as f:
         data = json.load(f)
         for user in data:
-            if user['snack'] == selected_login2:
+            if user['product'] == selected_login2:
                 user['price1'] = add_new_price
             elif not is_valid_number(add_new_price):
                 showerror('GUI Python', 'Please enter a valid number')
@@ -602,17 +604,22 @@ def back_to_admin_from_option():
 def select():
     a = com_box2.get()
     b = int(spin_box.get())
-    money = entr_amount.get()
+    money_str = entr_amount.get()
+    if not money_str.strip():
+        showerror("GUI Python", "Пожалуйста, введите сумму в кошельке")
+        return
+
+    money = float(money_str)
     with open("product_data.json", "r") as f:
         data = json.load(f)
     with open("book_data.json", "r") as f:
         data1 = json.load(f)
         for item in data:
-            if a == item['snack']:
-                price = item['price1']
-                total = b * float(price)
+            if a == item['product']:
+                price = float(item['price'])
+                total = float(b * float(price))
                 result = askyesno(title='GUI Python', message=f'продукт {b}*{a} = {total} AZN\n Желаете купить?')
-                if float(money) >= float(total):
+                if money >= total:
                     if result:
                         money = int(money) - int(total)
                         entr_amount.delete(0, END)
@@ -735,7 +742,7 @@ def profile():
 
 
 def delete_from_lst_box():
-    selected_item = lst_box.get(lst_box.curselection())
+    selected_item = lst_box.curselection()
     lst_box.delete(selected_item)
     with open("user_data.json", "r") as f:
         data = json.load(f)
@@ -751,7 +758,7 @@ def product_in_list():
     with open("product_data.json", "r") as f:
         data = json.load(f)
         for item in data:
-            product_info = item['snack']
+            product_info = item['product']
             lst_box_products.insert(END, product_info)
 
 
@@ -767,7 +774,7 @@ def product_list():
     with open("product_data.json", "r") as f:
         data = json.load(f)
         for item in data:
-            lst_box_users2.insert(END, item['snack'])
+            lst_box_users2.insert(END, item['product'])
 
 
 def edit_profile():
@@ -802,7 +809,7 @@ def view_products():
     with open("product_data.json", "r") as f:
         data = json.load(f)
         for item in data:
-            product_info1 = f"{item['snack']} = {item['price1']} AZN"
+            product_info1 = f"{item['product']} = {item['price1']} AZN"
             lst_box4.insert(END, product_info1)
 
 
